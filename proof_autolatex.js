@@ -7,8 +7,6 @@
 	a fitch.sty (Peter Selinger, 2005) proof in Latex.
 */
 
-proof_table = document.getElementsByClassName("prooftable")[0];
-
 replacement_dict = {'¬':"\\neg ", '∨':"\\lor ", '→':"\\rightarrow ", '↔':"\\leftrightarrow ", '∧':"\\land ",
 						'∀':"\\forall ", '∃':"\\exists "
 					}
@@ -92,7 +90,7 @@ function recurse_convert_to_latex(proof_list){
 global_line_num = 1;
 global_depth = 0;
 global_num_prems = 1;
-function start_latex_recursion(proof_list, num_prems){
+function start_latex_recursion(p_table){
 	/*
 		Starts a recurse_convert_to_latex recursion, with some extra steps of 
 		certain latex symbols that should appear only at the very beginning and end
@@ -100,12 +98,27 @@ function start_latex_recursion(proof_list, num_prems){
 	*/
 	global_line_num = 1;
 	global_depth = 0;
-	global_num_prems = 2;
+	global_num_prems = p_table.numPrems;
 	var final_latex = "$\n\\begin{nd}\n"
-	final_latex += recurse_convert_to_latex(proof_list)
+	final_latex += recurse_convert_to_latex(p_table.proofdata)
 	final_latex += "\\end{nd}\n$"
 	return final_latex
 }
 
-start_latex_recursion(proof_table.proofdata, proof_table.numPrems)
+// Uncomment these two lines to start the recursion!
+// It will be pasted to the console (on Chrome, ctrl+shift+i)
+proof_table = document.getElementsByClassName("prooftable")[0];
+start_latex_recursion(proof_table)
+
+// Alternatively, create a <pre id="someid"> </pre> and a 
+// <button onclick="fill_elem_with_latex('someid')"> Generate LaTeX </button>
+// When you click the button, the <pre> element will fill with 
+// the latex text!
+// Note: the <pre> element is used for preformatted text, and thus
+// will respect indentation.
+function fill_elem_with_latex(elem_id){
+	latex_elem = document.getElementById(elem_id);
+	proof_table = document.getElementsByClassName("prooftable")[0];
+	latex_elem.innerText = start_latex_recursion(proof_table);
+}
 
